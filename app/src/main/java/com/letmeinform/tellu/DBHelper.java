@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DBHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 7;
     public static final String DB_NAME = "products.db";
 
     public DBHelper(Context context) {
@@ -22,7 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("CREATE TABLE Product (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, deadline DATETIME)");
+        sqLiteDatabase.execSQL("CREATE TABLE Product (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, expirationDate LONG)");
     }
 
     @Override
@@ -33,8 +33,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void addProduct(String name, Date date) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        sqLiteDatabase.execSQL(String.format(Locale.ENGLISH, "INSERT INTO Product (name, deadline) VALUES ('%s', '%tF %tT')", name, date, date));
+        sqLiteDatabase.execSQL(String.format(Locale.ENGLISH, "INSERT INTO Product (name, expirationDate) VALUES ('%s', '%d')", name, date.getTime()));
         sqLiteDatabase.close();
+    }
+
+    public void addProduct(Product product) {
+        addProduct(product.name, product.expirationDate);
     }
 
     public ArrayList<Product> getProducts() {
@@ -45,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             int id = getID(cursor);
             String name = getName(cursor);
-            Date date = getDeadline(cursor);
+            Date date = getExpirationDate(cursor);
             products.add(new Product(id, name, date));
         }
 
@@ -80,15 +84,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return cursor.getString(columnIndex);
     }
 
-    private Date getDeadline(Cursor cursor) {
-        try {
-            int columnIndex = cursor.getColumnIndex("deadline");
-            String dateString = cursor.getString(columnIndex);
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+    private Date getExpirationDate(Cursor cursor) {
+        int columnIndex = cursor.getColumnIndex("expirationDate");
+        long expirationTime = cursor.getLong(columnIndex);
 
-            return format.parse(dateString);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+        return new Date(expirationTime);
     }
 }
