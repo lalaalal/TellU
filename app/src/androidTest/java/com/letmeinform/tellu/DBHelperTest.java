@@ -24,7 +24,8 @@ public class DBHelperTest {
     public void addProducts() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        try (DBHelper dbHelper = new DBHelper(appContext)) {
+        try (DBHelper dbHelper = new DBHelper(appContext, "test.db")) {
+            dbHelper.clearProducts();
             ArrayList<Product> expected = new ArrayList<>();
             expected.add(new Product(1, "Test1", new Date()));
             expected.add(new Product(2, "Test2", new Date()));

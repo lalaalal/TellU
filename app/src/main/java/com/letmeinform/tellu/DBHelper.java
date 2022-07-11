@@ -16,6 +16,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 7;
     public static final String DB_NAME = "products.db";
 
+    public DBHelper(Context context, String dbName) {
+        super(context, dbName, null, DB_VERSION);
+    }
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
