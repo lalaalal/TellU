@@ -4,14 +4,20 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        tools:context=".MainActivity">
+        tools:context=".MainActivity"
+        android:orientation="vertical">
+
+    <androidx.camera.view.PreviewView
+            android:id="@+id/viewFinder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     <Button
-            android:id="@+id/camera_btn"
+            android:id="@+id/image_capture_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:text="@string/camera"/>
+            android:text="@string/take_photo" />
+
+
 
 </LinearLayout>

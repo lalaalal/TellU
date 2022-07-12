@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">TellU</string>
     <string name="take_photo">Take Photo</string>
+    <string name="camera">Camera</string>
+    <string name="image_description">Captured Image</string>
+    <string name="product">Product</string>
+    <string name="loading">Loading</string>
 </resources>
