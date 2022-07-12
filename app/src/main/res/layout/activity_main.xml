@@ -5,13 +5,33 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
+        android:padding="15dp"
+        android:orientation="vertical"
         tools:context=".MainActivity">
     <Button
             android:id="@+id/camera_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="18sp"
+            android:padding="@dimen/main_button_padding"
+            android:textSize="@dimen/main_button_font_size"
             android:text="@string/camera"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/main_button_padding"
+            android:textSize="@dimen/main_button_font_size"
+            android:text="@string/undefined"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/main_button_padding"
+            android:textSize="@dimen/main_button_font_size"
+            android:text="@string/undefined"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/main_button_padding"
+            android:textSize="@dimen/main_button_font_size"
+            android:text="@string/undefined"/>
 
 </LinearLayout>
