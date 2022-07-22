@@ -116,7 +116,7 @@ public class VisionClient {
             if (res.getTextAnnotations() == null)
                 continue;
             Pattern pattern = Pattern.compile("20\\d\\d\\.[0-1]\\d\\.[0-3]\\d");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
             for (EntityAnnotation label : res.getTextAnnotations()) {
                 Matcher matcher = pattern.matcher(label.getDescription());
                 if (matcher.find()) {

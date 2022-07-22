@@ -109,7 +109,7 @@ public class ProductVerifyActivity extends AppCompatActivity {
             product = data;
             if (productNameTv != null)
                 productNameTv.setText(data.name);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
             if (expirationDateTv != null) {
                 if (data.expirationDate != null) {
                     expirationDateTv.setText(dateFormat.format(data.expirationDate));

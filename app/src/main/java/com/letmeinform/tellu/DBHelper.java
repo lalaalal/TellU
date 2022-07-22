@@ -36,7 +36,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void addProduct(String name, Date date) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-        sqLiteDatabase.execSQL(String.format(Locale.ENGLISH, "INSERT INTO Product (name, expirationDate) VALUES ('%s', '%d')", name, date.getTime()));
+        sqLiteDatabase.execSQL(String.format(Locale.getDefault().getLanguage(), "INSERT INTO Product (name, expirationDate) VALUES ('%s', '%d')", name, date.getTime()));
         sqLiteDatabase.close();
     }
 
