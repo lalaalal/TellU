@@ -1,6 +1,5 @@
 package com.letmeinform.tellu;
 
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,39 +8,44 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.apache.v2.ApacheHttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.vision.v1.Vision;
-import com.google.api.services.vision.v1.VisionRequest;
-import com.google.api.services.vision.v1.VisionRequestInitializer;
-import com.google.api.services.vision.v1.model.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class ProductVerifyActivity extends AppCompatActivity {
 
     private ImageView imageView;
     private TextView productNameTv;
-
+    private TextView expirationDateTv;
+    private Button saveBtn;
+    private Product product = null;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_verify);
 
         imageView = findViewById(R.id.captured_image);
-        productNameTv = findViewById(R.id.product_name);
+        productNameTv = findViewById(R.id.product_name_tv);
+        expirationDateTv = findViewById(R.id.expiration_date_tv);
+        saveBtn = findViewById(R.id.save_btn);
+
+        saveBtn.setOnClickListener(view -> {
+            try (DBHelper dbHelper = new DBHelper(this)) {
+                if (product != null)
+                    dbHelper.addProduct(product);
+
+                saveBtn.setEnabled(false);
+                Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         Intent intent = getIntent();
         String imageName = intent.getExtras().getString("file_name");
@@ -94,16 +98,27 @@ public class ProductVerifyActivity extends AppCompatActivity {
         }
     }
 
-    public class ProductVerityUIHandler extends UIHandler<String> {
+    public class ProductVerityUIHandler extends UIHandler<Product> {
 
         public ProductVerityUIHandler(ProductVerifyActivity activity) {
             super(activity);
         }
 
         @Override
-        protected void runOnUIThread(String data) {
+        protected void runOnUIThread(Product data) {
+            product = data;
             if (productNameTv != null)
-                productNameTv.setText(data);
+                productNameTv.setText(data.name);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA);
+            if (expirationDateTv != null) {
+                if (data.expirationDate != null) {
+                    expirationDateTv.setText(dateFormat.format(data.expirationDate));
+                    saveBtn.setEnabled(true);
+                } else {
+                    expirationDateTv.setText(R.string.not_found);
+                    Toast.makeText(ProductVerifyActivity.this, "Cannot find date", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 }

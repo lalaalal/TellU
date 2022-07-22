@@ -4,6 +4,9 @@
     <string name="camera">Camera</string>
     <string name="image_description">Captured Image</string>
     <string name="product">Product</string>
+    <string name="expiration_date">Expiration Date</string>
     <string name="loading">Loading</string>
+    <string name="not_found">Not Found</string>
     <string name="undefined">Undefined</string>
+    <string name="save">Save</string>
 </resources>

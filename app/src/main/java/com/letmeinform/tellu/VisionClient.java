@@ -2,6 +2,7 @@ package com.letmeinform.tellu;
 
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.Toast;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -12,7 +13,13 @@ import com.google.api.services.vision.v1.model.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class VisionClient {
 
@@ -21,9 +28,9 @@ public class VisionClient {
     private static final int MAX_RESULTS = 10;
     private static final int MAX_DIMENSION = 1200;
 
-    private final UIHandler<String> uiHandler;
+    private final UIHandler<Product> uiHandler;
 
-    public VisionClient(UIHandler<String> uiHandler) {
+    public VisionClient(UIHandler<Product> uiHandler) {
         this.uiHandler = uiHandler;
     }
 
@@ -61,6 +68,11 @@ public class VisionClient {
                 webDetection.setType("WEB_DETECTION");
                 webDetection.setMaxResults(MAX_RESULTS);
                 add(webDetection);
+
+                Feature textDetection = new Feature();
+                textDetection.setType("TEXT_DETECTION");
+                textDetection.setMaxResults(MAX_RESULTS);
+                add(textDetection);
             }});
 
             add(annotateImageRequest);
@@ -89,18 +101,31 @@ public class VisionClient {
         return Bitmap.createScaledBitmap(bitmap, resizedWidth, resizedHeight, false);
     }
 
-    private static String convertResponseToString(BatchAnnotateImagesResponse response) {
-        StringBuilder message = new StringBuilder();
+    private static Product convertResponseToProduct(BatchAnnotateImagesResponse response) throws ParseException {
+        String productName = "";
+        Date expirationDate = null;
 
         for (AnnotateImageResponse res : response.getResponses()) {
             WebDetection webDetection = res.getWebDetection();
+            if (webDetection == null)
+                continue;
             for (WebLabel label : webDetection.getBestGuessLabels()) {
-                message.append(label.getLabel());
+                productName = label.getLabel();
+            }
+
+            if (res.getTextAnnotations() == null)
+                continue;
+            Pattern pattern = Pattern.compile("20\\d\\d\\.[0-1]\\d\\.[0-3]\\d");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.KOREA);
+            for (EntityAnnotation label : res.getTextAnnotations()) {
+                Matcher matcher = pattern.matcher(label.getDescription());
+                if (matcher.find()) {
+                    expirationDate = dateFormat.parse(matcher.group());
+                }
             }
         }
 
-
-        return message.toString();
+        return new Product(productName, expirationDate);
     }
 
     private class BackgroundTask implements Runnable {
@@ -117,11 +142,13 @@ public class VisionClient {
                 Vision.Images.Annotate request = prepareAnnotationRequest(scaledBitmap);
 
                 BatchAnnotateImagesResponse response = request.execute();
-                String productName = convertResponseToString(response);
-                uiHandler.updateUI(productName);
+                Product product = convertResponseToProduct(response);
+                uiHandler.updateUI(product);
 
             } catch (IOException exception) {
                 exception.printStackTrace();
+            } catch (ParseException e) {
+                Toast.makeText(uiHandler.getActivity(), "Failed to parse date", Toast.LENGTH_SHORT).show();
             }
         }
     }
