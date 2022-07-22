@@ -86,7 +86,6 @@ public class CameraActivity extends AppCompatActivity {
             public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
                 cameraProvider.unbindAll();
                 String msg = "Photo capture succeeded: " + outputFileResults.getSavedUri();
-                Toast.makeText(getBaseContext(), msg, Toast.LENGTH_SHORT).show();
                 Log.d(TAG, msg);
 
                 Intent intent = new Intent(getApplicationContext(), ProductVerifyActivity.class);

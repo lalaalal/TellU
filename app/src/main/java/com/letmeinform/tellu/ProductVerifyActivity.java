@@ -43,7 +43,7 @@ public class ProductVerifyActivity extends AppCompatActivity {
                     dbHelper.addProduct(product);
 
                 saveBtn.setEnabled(false);
-                Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.saved, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -116,7 +116,7 @@ public class ProductVerifyActivity extends AppCompatActivity {
                     saveBtn.setEnabled(true);
                 } else {
                     expirationDateTv.setText(R.string.not_found);
-                    Toast.makeText(ProductVerifyActivity.this, "Cannot find date", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProductVerifyActivity.this, R.string.date_not_found, Toast.LENGTH_SHORT).show();
                 }
             }
         }
